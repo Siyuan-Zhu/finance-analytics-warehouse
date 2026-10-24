@@ -6,19 +6,19 @@ title: Payables
 All data on this page is synthetic. Vendors are invented. Amounts are in NIU (normalized index units).
 </Alert>
 
-The bill-pay platform syncs most bills into the accounting system. Adding the two exports counts each synced bill twice. The reconciliation matches bills by vendor, amount and date and removes the duplicates.
+Most supplier bills appear in both the AP export and the accounting system. Adding the two counts those bills twice. The reconciliation matches bills by vendor, amount and date and removes the duplicates.
 
 ```sql totals
 select * from larkspur.ap_totals
 ```
 
-<BigValue data={totals} value=platform_total title="Platform total" fmt="#,##0" />
+<BigValue data={totals} value=platform_total title="AP export total" fmt="#,##0" />
 <BigValue data={totals} value=accounting_total title="Accounting total" fmt="#,##0" />
 <BigValue data={totals} value=deduplicated_total title="After removing duplicates" fmt="#,##0" />
 
 ```sql steps
-select 'Naive total (platform plus accounting)' as step, platform_total + accounting_total as amount from larkspur.ap_totals
-union all select 'Less platform bills matched to a document', -matched_total from larkspur.ap_totals
+select 'Naive total (AP export plus accounting)' as step, platform_total + accounting_total as amount from larkspur.ap_totals
+union all select 'Less AP bills matched to a document', -matched_total from larkspur.ap_totals
 union all select 'Less ambiguous bills held out', -held_out_total from larkspur.ap_totals
 union all select 'Deduplicated total', deduplicated_total from larkspur.ap_totals
 ```
@@ -30,7 +30,7 @@ union all select 'Deduplicated total', deduplicated_total from larkspur.ap_total
 
 ```sql status
 select case status when 'matched' then 'Matched to one document'
-    when 'platform_only' then 'Platform only (never synced)'
+    when 'platform_only' then 'AP export only'
     when 'accounting_only' then 'Accounting only (entered directly)'
     else 'Ambiguous (held out)' end as outcome, bills, amount
 from larkspur.ap_status

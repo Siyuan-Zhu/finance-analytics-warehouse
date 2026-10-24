@@ -88,10 +88,10 @@ February 2024 understate open payables and are warm-up months.
 
 ### AP matching
 
-A platform bill and an accounting-system document match when the normalized vendor is equal, the amounts are within
+An AP-export bill and an accounting-system document match when the normalized vendor is equal, the amounts are within
 `ap_amount_tolerance` and the dates are within `ap_date_window_days`. A bill with two candidate documents, or whose one
 document is also claimed by another bill, is ambiguous and held out. `fct_ap_bills` has one row per real obligation:
-every accounting document (with platform dates when a bill matched) plus every platform-only bill. The identity
+every accounting document (with AP-export dates when a bill matched) plus every bill found only in the AP export. The identity
 `deduplicated = naive - matched - held out` is a dbt test.
 
 ## Dashboard (optional, local)

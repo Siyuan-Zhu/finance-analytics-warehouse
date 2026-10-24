@@ -27,7 +27,7 @@ from larkspur.close_log
     <Column id=run_at title="Run at" fmt="yyyy-mm-dd hh:mm" />
     <Column id=status />
     <Column id=gl_rows title="Ledger rows" />
-    <Column id=platform_rows title="Platform bills" />
+    <Column id=platform_rows title="AP bills" />
     <Column id=ap_line_rows title="Bill lines" />
     <Column id=budget_rows title="Budget rows" />
     <Column id=checks_passed title="Checks passed" />

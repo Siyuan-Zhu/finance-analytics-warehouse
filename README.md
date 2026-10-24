@@ -19,7 +19,7 @@ Finance data rarely arrives as a clean table. This project handles four ordinary
 - The ledger export is a report. It has title rows, one block per account, repeated column headings and subtotal rows.
 - A year-end journal puts a large amount into one month. A plain average then makes a normal month look like a spike.
 - The last month in the data is only a few days old. Averaging it with full months understates everything.
-- The bill-pay platform and the accounting system both record the same supplier bills. Adding the two exports counts most bills twice.
+- Most supplier bills appear twice: once in the AP export and again as bill lines in the accounting system. Adding the two counts those bills twice.
 
 ## How it works
 
@@ -41,7 +41,7 @@ Python reads files and runs the steps in order. SQL holds every business rule. T
 
 | Layer | What it holds |
 |---|---|
-| landing | One folder per month with the ledger `.xlsx`, the platform bills `.csv` and the accounting bill lines `.csv`. One budget file. |
+| landing | One folder per month with the ledger `.xlsx`, the AP export `.csv` and the accounting bill lines `.csv`. One budget file. |
 | raw | The files as loaded, plus the month they arrived in. Loading a month again replaces it. |
 | staging | One model per raw table: types, names, a row key, tidied vendor names. |
 | intermediate | The rules: which reporting line a ledger row belongs to, which months are closed, which bills match which documents. |
@@ -140,14 +140,14 @@ erDiagram
 
 `python -m src.run_all` generates the data and closes all 34 months in order, from January 2024 to the first days of October 2026. Four rows of the log from a full run:
 
-| Month | Ledger rows | Platform bills | Bill lines | Budget rows | Checks passed | Status |
+| Month | Ledger rows | AP bills | Bill lines | Budget rows | Checks passed | Status |
 |---|---|---|---|---|---|---|
 | 2024-01 | 388 | 35 | 71 | 2,136 | 116 of 116 | closed |
 | 2025-12 | 398 | 36 | 73 | 2,136 | 116 of 116 | closed |
 | 2026-09 | 388 | 34 | 81 | 2,136 | 116 of 116 | closed |
 | 2026-10 (partial) | 62 | 3 | 6 | 2,136 | 116 of 116 | closed |
 
-All 34 months closed. Together they loaded 12,894 ledger rows, 1,170 platform bills and 2,548 bill lines. Each close runs 116 checks: 111 dbt data tests, 2 dbt unit tests, the load, the separate check and the formula check.
+All 34 months closed. Together they loaded 12,894 ledger rows, 1,170 AP bills and 2,548 bill lines. Each close runs 116 checks: 111 dbt data tests, 2 dbt unit tests, the load, the separate check and the formula check.
 
 ## Findings
 
@@ -176,14 +176,14 @@ October 2026 has 62 ledger rows and its last posting is on 4 October. A month co
 
 | | Amount (NIU) |
 |---|---|
-| Platform bills | 6,812,274 |
+| AP export | 6,812,274 |
 | Accounting bill lines | 6,511,913 |
 | Naive total | 13,324,187 |
-| Less platform bills matched to a document (1,042 bills) | 5,974,856 |
+| Less AP bills matched to a document (1,042 bills) | 5,974,856 |
 | Less ambiguous bills held out (33 bills) | 19,589 |
 | De-duplicated total | 7,329,743 |
 
-The naive total is 82 percent too high. A platform bill matches a document when the vendor name is the same after tidying, the amounts are within 0.50 and the dates are within 3 days. Of the 1,170 platform bills, 1,042 matched one document, 95 were never synced and 33 are held out as ambiguous (two candidate documents, or a document that two platform bills both claim). A further 209 documents were entered directly in the accounting system. The platform leaves the GL code blank on many bills, and 587 matched bills took their code from the document.
+The naive total is 82 percent too high. An AP bill matches a document when the vendor name is the same after tidying, the amounts are within 0.50 and the dates are within 3 days. Of the 1,170 AP bills, 1,042 matched one document, 95 never reached the accounting system and 33 are held out as ambiguous (two candidate documents, or a document that two AP bills both claim). A further 209 documents were entered directly in the accounting system. The AP export leaves the GL code blank on many bills, and 587 matched bills took their code from the document.
 
 ### 4. Budget against actual
 
@@ -265,7 +265,7 @@ npm run dev
 - One company, one unit of account (NIU), three years, five stores and a head office. There is no balance sheet reporting, cash flow or tax.
 - Run rates are monthly averages over closed months. There is no weekly view.
 - Payment dates are the ones known at the last run. A payment after 4 October 2026 shows as unpaid.
-- Matching cannot catch a synced bill whose accounting date drifted more than 3 days. The generator plants a few, and they still count twice.
+- Matching cannot catch a duplicated bill whose accounting date drifted more than 3 days. The generator plants a few, and they still count twice.
 - The accounting system's payables and the ledger are generated separately, so payables do not tie to a ledger liability account.
 - DPO uses all bills as purchases, because the payables include expense bills as well as stock. January and February 2024 are warm-up months.
 - A partial month is logged as closed because the close ran. The data itself marks it partial, and every report treats it that way.
