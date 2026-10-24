@@ -1,0 +1,4 @@
+name: larkspur
+type: duckdb
+options:
+  filename: ../../../warehouse/larkspur.duckdb

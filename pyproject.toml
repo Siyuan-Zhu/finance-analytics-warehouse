@@ -1,0 +1,18 @@
+[project]
+name = "finance-analytics-warehouse"
+version = "2.0.0"
+description = "Synthetic finance data warehouse: DuckDB and dbt, an automated monthly close, an Excel pack and a dashboard."
+requires-python = ">=3.11"
+dependencies = ["duckdb==1.4.2", "dbt-core==1.11.16", "dbt-duckdb==1.10.1", "openpyxl>=3.1"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = ["dashboard/node_modules", "dbt/target", "dbt/logs"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

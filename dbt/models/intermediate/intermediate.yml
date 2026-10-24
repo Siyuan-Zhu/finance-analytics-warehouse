@@ -1,0 +1,92 @@
+version: 2
+
+models:
+  - name: int_gl_mapped
+    description: Profit-and-loss rows with the reporting line that the ordered rules chose.
+    columns:
+      - name: entry_key
+        data_tests: [unique, not_null]
+      - name: reporting_line_key
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('reporting_lines'), field: reporting_line_key}}
+      - name: mapping_rule_type
+        data_tests:
+          - accepted_values: {arguments: {values: [reference, account, keyword]}}
+  - name: int_month_status
+    columns:
+      - name: month_start
+        data_tests: [unique, not_null]
+  - name: int_ap_documents
+    columns:
+      - name: doc_id
+        data_tests: [unique, not_null]
+  - name: int_ap_matches
+    columns:
+      - name: platform_bill_id
+        data_tests: [unique, not_null]
+      - name: match_status
+        data_tests:
+          - accepted_values: {arguments: {values: [matched, platform_only, ambiguous]}}
+      - name: matched_doc_id
+        data_tests: [unique]
+  - name: int_ap_candidates
+    description: Candidate pairs. One platform bill can resemble several documents.
+
+unit_tests:
+  - name: first_matching_rule_wins
+    description: A reference override beats the account rule, and an account rule beats a keyword.
+    model: int_gl_mapped
+    given:
+      - input: ref('stg_gl_entries')
+        rows:
+          - {entry_key: a, landing_month: 2025-06-01, source_row: 1, account_code: '6650', entry_date: 2025-06-18, month_start: 2025-06-01, reference: MP-9, description: Legal fees, cost_center_code: HQ01, debit: 100, credit: 0, amount: 100}
+          - {entry_key: b, landing_month: 2025-06-01, source_row: 2, account_code: '6650', entry_date: 2025-06-18, month_start: 2025-06-01, reference: X-1, description: Legal fees, cost_center_code: HQ01, debit: 50, credit: 0, amount: 50}
+          - {entry_key: c, landing_month: 2025-06-01, source_row: 3, account_code: '6990', entry_date: 2025-06-18, month_start: 2025-06-01, reference: X-2, description: Courier freight to customers, cost_center_code: HQ01, debit: 20, credit: 0, amount: 20}
+          - {entry_key: d, landing_month: 2025-06-01, source_row: 4, account_code: '6990', entry_date: 2025-06-18, month_start: 2025-06-01, reference: X-3, description: Mystery posting, cost_center_code: HQ01, debit: 5, credit: 0, amount: 5}
+          - {entry_key: e, landing_month: 2025-06-01, source_row: 5, account_code: '1010', entry_date: 2025-06-18, month_start: 2025-06-01, reference: X-4, description: Bank receipt, cost_center_code: HQ01, debit: 5, credit: 0, amount: 5}
+      - input: ref('accounts')
+        rows:
+          - {account_code: '6650', statement: pl}
+          - {account_code: '6990', statement: pl}
+          - {account_code: '1010', statement: balance_sheet}
+      - input: ref('mapping_rules')
+        rows:
+          - {rule_order: 1, rule_type: reference, match_value: MP-9, reporting_line_key: professional_fees}
+          - {rule_order: 10, rule_type: account, match_value: '6650', reporting_line_key: office_travel}
+          - {rule_order: 101, rule_type: keyword, match_value: legal, reporting_line_key: professional_fees}
+          - {rule_order: 102, rule_type: keyword, match_value: freight, reporting_line_key: outbound_freight}
+      - input: ref('reporting_lines')
+        rows:
+          - {reporting_line_key: professional_fees, sign: expense}
+          - {reporting_line_key: office_travel, sign: expense}
+          - {reporting_line_key: outbound_freight, sign: expense}
+      - input: ref('excluded_journals')
+        rows:
+          - {reference: X-1, excluded_from: run_rate}
+    expect:
+      rows:
+        - {entry_key: a, reporting_line_key: professional_fees, mapping_rule_type: reference, reporting_amount: 100, excluded_from_run_rate: false}
+        - {entry_key: b, reporting_line_key: office_travel, mapping_rule_type: account, reporting_amount: 50, excluded_from_run_rate: true}
+        - {entry_key: c, reporting_line_key: outbound_freight, mapping_rule_type: keyword, reporting_amount: 20, excluded_from_run_rate: false}
+        - {entry_key: d, reporting_line_key: null, mapping_rule_type: null, reporting_amount: null, excluded_from_run_rate: false}
+  - name: vendor_names_are_normalized_for_matching
+    description: Case, punctuation and company suffixes do not change the vendor key.
+    model: stg_platform_bills
+    given:
+      - input: source('raw', 'platform_bills')
+        rows:
+          - {landing_month: 2025-01-01, bill_id: p1, vendor: Cedar Ridge Freight Inc, bill_date: 2025-01-05, amount: 1}
+          - {landing_month: 2025-01-01, bill_id: p2, vendor: "CEDAR RIDGE FREIGHT, INC.", bill_date: 2025-01-05, amount: 1}
+          - {landing_month: 2025-01-01, bill_id: p3, vendor: Willow & Finch Design, bill_date: 2025-01-05, amount: 1}
+          - {landing_month: 2025-01-01, bill_id: p4, vendor: Willow and Finch Design Co, bill_date: 2025-01-05, amount: 1}
+          - {landing_month: 2025-01-01, bill_id: p5, vendor: "Cedar Ridge Freight Inc ", bill_date: 2025-01-05, amount: 1}
+          - {landing_month: 2025-01-01, bill_id: p6, vendor: " The Willow and Finch Design Co.", bill_date: 2025-01-05, amount: 1}
+    expect:
+      rows:
+        - {platform_bill_id: p1, vendor_key: cedar ridge freight}
+        - {platform_bill_id: p2, vendor_key: cedar ridge freight}
+        - {platform_bill_id: p3, vendor_key: willow and finch design}
+        - {platform_bill_id: p4, vendor_key: willow and finch design}
+        - {platform_bill_id: p5, vendor_key: cedar ridge freight}
+        - {platform_bill_id: p6, vendor_key: willow and finch design}

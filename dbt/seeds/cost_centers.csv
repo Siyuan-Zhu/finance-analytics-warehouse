@@ -1,0 +1,7 @@
+cost_center_code,cost_center_name,kind
+ST01,Northgate Store,store
+ST02,Riverbend Store,store
+ST03,Lakeshore Store,store
+ST04,Highland Store,store
+ST05,Eastbrook Store,store
+HQ01,Head Office and Online,head_office

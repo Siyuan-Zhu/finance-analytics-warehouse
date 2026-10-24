@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+data/
+warehouse/
+output/
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+dashboard/node_modules/
+dashboard/build/
+dashboard/.evidence/
+.evidence/
+.DS_Store
+dbt/.user.yml

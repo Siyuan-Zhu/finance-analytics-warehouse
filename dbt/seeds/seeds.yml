@@ -1,0 +1,49 @@
+version: 2
+
+seeds:
+  - name: accounts
+    description: Chart of accounts. Four-digit codes. Statement says whether a row is profit and loss.
+    columns:
+      - name: account_code
+        data_tests: [unique, not_null]
+      - name: statement
+        data_tests:
+          - accepted_values: {arguments: {values: [pl, balance_sheet, transfer]}}
+      - name: account_class
+        data_tests:
+          - accepted_values: {arguments: {values: [asset, liability, revenue, cogs, expense]}}
+  - name: cost_centers
+    description: Five stores and the head office. No other segment exists.
+    columns:
+      - name: cost_center_code
+        data_tests:
+          - unique
+          - not_null
+          - accepted_values: {arguments: {values: [ST01, ST02, ST03, ST04, ST05, HQ01]}}
+  - name: reporting_lines
+    columns:
+      - name: reporting_line_key
+        data_tests: [unique, not_null]
+      - name: sign
+        data_tests:
+          - accepted_values: {arguments: {values: [income, expense]}}
+  - name: mapping_rules
+    description: Ordered rules that place a ledger row on a reporting line. Lowest rule_order that matches wins.
+    columns:
+      - name: rule_order
+        data_tests: [unique, not_null]
+      - name: rule_type
+        data_tests:
+          - accepted_values: {arguments: {values: [reference, account, keyword]}}
+      - name: reporting_line_key
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('reporting_lines'), field: reporting_line_key}}
+  - name: excluded_journals
+    description: Journal references that stay in the monthly report and come out of the run-rate measures.
+    columns:
+      - name: reference
+        data_tests: [unique, not_null]
+      - name: excluded_from
+        data_tests:
+          - accepted_values: {arguments: {values: [run_rate]}}

@@ -1,0 +1,7 @@
+larkspur:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('LARKSPUR_DB', 'warehouse/larkspur.duckdb') }}"
+      threads: 1

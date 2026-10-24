@@ -1,0 +1,130 @@
+version: 2
+
+models:
+  - name: dim_date
+    columns:
+      - name: date_day
+        data_tests: [unique, not_null]
+  - name: dim_account
+    columns:
+      - name: account_code
+        data_tests: [unique, not_null]
+  - name: dim_cost_center
+    columns:
+      - name: cost_center_code
+        data_tests: [unique, not_null]
+  - name: dim_reporting_line
+    columns:
+      - name: reporting_line_key
+        data_tests: [unique, not_null]
+  - name: dim_vendor
+    columns:
+      - name: vendor_key
+        data_tests: [unique, not_null]
+
+  - name: fct_gl_entries
+    columns:
+      - name: entry_key
+        data_tests: [unique, not_null]
+      - name: entry_date
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('dim_date'), field: date_day}}
+      - name: account_code
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('dim_account'), field: account_code}}
+      - name: cost_center_code
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('dim_cost_center'), field: cost_center_code}}
+      - name: reporting_line_key
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_reporting_line'), field: reporting_line_key}}
+      - name: mapping_rule_type
+        data_tests:
+          - accepted_values: {arguments: {values: [reference, account, keyword]}}
+
+  - name: fct_budget
+    columns:
+      - name: budget_key
+        data_tests: [unique, not_null]
+      - name: month_start
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('dim_date'), field: date_day}}
+      - name: account_code
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_account'), field: account_code}}
+      - name: cost_center_code
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_cost_center'), field: cost_center_code}}
+      - name: reporting_line_key
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('dim_reporting_line'), field: reporting_line_key}}
+
+  - name: fct_ap_bills
+    columns:
+      - name: ap_bill_key
+        data_tests: [unique, not_null]
+      - name: source
+        data_tests:
+          - accepted_values: {arguments: {values: [synced, direct, unresolved_candidate, platform_only]}}
+      - name: vendor_key
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('dim_vendor'), field: vendor_key}}
+      - name: bill_date
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('dim_date'), field: date_day}}
+      - name: cost_center_code
+        data_tests:
+          - relationships:
+              arguments: {to: ref('dim_cost_center'), field: cost_center_code}
+              config: {where: "cost_center_code is not null"}
+
+  - name: rpt_monthly_pl
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+  - name: rpt_store_pl
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+  - name: rpt_budget_vs_actual
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+  - name: rpt_budget_misses
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+  - name: rpt_run_rate
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+  - name: rpt_variance
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+  - name: rpt_ap_reconciliation
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+      - name: status
+        data_tests:
+          - accepted_values: {arguments: {values: [matched, platform_only, accounting_only, ambiguous]}}
+  - name: rpt_ap_aging
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+  - name: rpt_dpo
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+  - name: rpt_ap_totals
+    columns:
+      - name: deduplicated_total
+        data_tests: [not_null]

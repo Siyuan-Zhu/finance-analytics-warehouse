@@ -1,0 +1,33 @@
+account_code,account_name,statement,account_class
+1010,Operating Bank Account,balance_sheet,asset
+1055,Card Clearing,balance_sheet,asset
+1655,Accumulated Depreciation,balance_sheet,asset
+1900,Inter-account Transfers,transfer,asset
+2100,Accrued Liabilities,balance_sheet,liability
+4025,Equipment Sales,pl,revenue
+4035,Footwear Sales,pl,revenue
+4045,Apparel Sales,pl,revenue
+4210,Online Sales,pl,revenue
+4805,Other Operating Income,pl,revenue
+4905,Sales Returns and Discounts,pl,revenue
+5040,Product Cost,pl,cogs
+5205,Inbound Freight,pl,cogs
+5305,Inventory Shrinkage,pl,cogs
+6105,Store Wages,pl,expense
+6115,Store Payroll Taxes and Benefits,pl,expense
+6145,Store Rent,pl,expense
+6155,Utilities,pl,expense
+6165,Store Repairs,pl,expense
+6185,Marketing and Promotion,pl,expense
+6240,Outbound Freight and Delivery,pl,expense
+6250,Card Processing Fees,pl,expense
+6265,Store Supplies,pl,expense
+6475,Staff Training and Recruitment,pl,expense
+6600,Head Office Salaries,pl,expense
+6610,Head Office Benefits,pl,expense
+6620,Software and Subscriptions,pl,expense
+6630,Professional Fees,pl,expense
+6640,Insurance,pl,expense
+6650,Office and Travel,pl,expense
+6905,Depreciation Expense,pl,expense
+6990,Uncoded Expense,pl,expense

@@ -1,0 +1,27 @@
+reporting_line_key,line_name,section_key,section_label,section_order,line_order,sign
+apparel_sales,Apparel Sales,revenue,Revenue,1,1,income
+equipment_sales,Equipment Sales,revenue,Revenue,1,2,income
+footwear_sales,Footwear Sales,revenue,Revenue,1,3,income
+online_sales,Online Sales,revenue,Revenue,1,4,income
+other_operating_income,Other Operating Income,revenue,Revenue,1,5,income
+sales_returns,Sales Returns and Discounts,revenue,Revenue,1,6,income
+product_cost,Product Cost,cogs,Cost of goods,2,1,expense
+inbound_freight,Inbound Freight,cogs,Cost of goods,2,2,expense
+inventory_shrinkage,Inventory Shrinkage,cogs,Cost of goods,2,3,expense
+store_wages,Store Wages,store_opex,Store operating expense,3,1,expense
+store_payroll_benefits,Store Payroll Taxes and Benefits,store_opex,Store operating expense,3,2,expense
+store_rent,Store Rent,store_opex,Store operating expense,3,3,expense
+utilities,Utilities,store_opex,Store operating expense,3,4,expense
+store_repairs,Store Repairs,store_opex,Store operating expense,3,5,expense
+outbound_freight,Outbound Freight and Delivery,store_opex,Store operating expense,3,6,expense
+card_fees,Card Processing Fees,store_opex,Store operating expense,3,7,expense
+store_supplies,Store Supplies,store_opex,Store operating expense,3,8,expense
+marketing,Marketing and Promotion,store_opex,Store operating expense,3,9,expense
+ho_salaries,Head Office Salaries,ho_opex,Head office expense,4,1,expense
+ho_benefits,Head Office Benefits,ho_opex,Head office expense,4,2,expense
+software,Software and Subscriptions,ho_opex,Head office expense,4,3,expense
+professional_fees,Professional Fees,ho_opex,Head office expense,4,4,expense
+insurance,Insurance,ho_opex,Head office expense,4,5,expense
+office_travel,Office and Travel,ho_opex,Head office expense,4,6,expense
+training_recruitment,Staff Training and Recruitment,ho_opex,Head office expense,4,7,expense
+depreciation,Depreciation,ho_opex,Head office expense,4,8,expense

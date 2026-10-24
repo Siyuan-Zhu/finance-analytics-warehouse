@@ -1,0 +1,45 @@
+name: larkspur
+version: "2.0.0"
+config-version: 2
+profile: larkspur
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  # AP matching: a platform bill matches a document with the same vendor, an amount within the tolerance and a date
+  # within the window.
+  ap_amount_tolerance: 0.50
+  ap_date_window_days: 3
+  # Run rate and variance: the window is the last N closed months; the prior window is the N months before it.
+  run_rate_window_months: 12
+  # A line is flagged when its percent change AND its change per month are both above these.
+  variance_pct_threshold: 0.15
+  variance_min_abs_monthly: 1000
+  # A quarterly budget miss: adverse by more than this share of budget AND by more than this amount.
+  budget_miss_pct: 0.10
+  budget_miss_min_abs: 3000
+
+models:
+  larkspur:
+    staging:
+      +materialized: view
+      +schema: staging
+    intermediate:
+      +materialized: table
+      +schema: intermediate
+    marts:
+      +materialized: table
+      +schema: marts
+
+seeds:
+  larkspur:
+    +schema: reference
+    accounts:
+      +column_types: {account_code: varchar}
+    mapping_rules:
+      +column_types: {match_value: varchar}

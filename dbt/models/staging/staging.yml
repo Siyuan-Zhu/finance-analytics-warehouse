@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: stg_gl_entries
+    columns:
+      - name: entry_key
+        data_tests: [unique, not_null]
+      - name: account_code
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('accounts'), field: account_code}}
+      - name: cost_center_code
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('cost_centers'), field: cost_center_code}}
+  - name: stg_platform_bills
+    columns:
+      - name: platform_bill_id
+        data_tests: [unique, not_null]
+      - name: vendor_key
+        data_tests: [not_null]
+  - name: stg_ap_bill_lines
+    columns:
+      - name: line_key
+        data_tests: [unique, not_null]
+  - name: stg_budget
+    columns:
+      - name: budget_key
+        data_tests: [unique, not_null]
+      - name: account_code
+        data_tests:
+          - relationships: {arguments: {to: ref('accounts'), field: account_code}}
+      - name: cost_center_code
+        data_tests:
+          - relationships: {arguments: {to: ref('cost_centers'), field: cost_center_code}}

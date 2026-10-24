@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: raw
+    description: Tables written by the Python loader. The columns are the contract between Python and SQL.
+    schema: raw
+    tables:
+      - name: gl_entries
+        description: One row per ledger posting, flattened from the monthly report-style export.
+      - name: platform_bills
+        description: One row per bill in the bill-pay platform export.
+      - name: ap_bill_lines
+        description: One row per bill line in the accounting-system export.
+      - name: budget
+        description: Budget by month, account and cost centre.
+      - name: close_log
+        description: One row per close attempt, appended by the Python close.
