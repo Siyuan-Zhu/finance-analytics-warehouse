@@ -44,7 +44,7 @@ GROWTH = {
 UNCODED = [
     ("Inbound freight - pallet delivery", "HQ01"), ("Courier freight to online customers", "HQ01"),
     ("Software licence renewal - extra seats", "HQ01"), ("Cleaning contractor visit", "ST02"),
-    ("Signage touch-up", "ST03"), ("Legal review of supplier terms", "HQ01"),
+    ("Signage touch-up", "ST03"), ("Legal review of lease terms", "HQ01"),
     ("Insurance premium adjustment", "HQ01"), ("Equipment repair call-out", "ST04"),
 ]
 # Year-end physical count true-up, booked on 31 December across the five stores. Larger in FY2025 than FY2024.
@@ -223,7 +223,7 @@ def _build_month(year: int, month: int, cfg: Config) -> Month:
         elif acct == "6240":
             m.post(acct, m.day(28), "Outbound delivery", cc, amt, "1010", prefix="DL")
         elif acct == "4805":
-            m.post(acct, m.day(20), "Supplier rebates", cc, amt, "1010", prefix="RB")
+            m.post(acct, m.day(20), "Volume rebates", cc, amt, "1010", prefix="RB")
         elif acct == "6620":
             m.post(acct, m.day(3), "Software subscriptions", cc, amt, "1010", prefix="SW")
         elif acct == "6630":

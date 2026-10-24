@@ -6,7 +6,7 @@ title: Payables
 All data on this page is synthetic. Vendors are invented. Amounts are in NIU (normalized index units).
 </Alert>
 
-Most supplier bills appear in both the AP export and the accounting system. Adding the two counts those bills twice. The reconciliation matches bills by vendor, amount and date and removes the duplicates.
+Most bills appear in both the AP export and the accounting system. Adding the two counts those bills twice. The reconciliation matches bills by vendor, amount and date and removes the duplicates.
 
 ```sql totals
 select * from larkspur.ap_totals

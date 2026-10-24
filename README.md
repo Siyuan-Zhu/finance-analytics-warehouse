@@ -19,7 +19,7 @@ Finance data rarely arrives as a clean table. This project handles four ordinary
 - The ledger export is a report. It has title rows, one block per account, repeated column headings and subtotal rows.
 - A year-end journal puts a large amount into one month. A plain average then makes a normal month look like a spike.
 - The last month in the data is only a few days old. Averaging it with full months understates everything.
-- Most supplier bills appear twice: once in the AP export and again as bill lines in the accounting system. Adding the two counts those bills twice.
+- Most bills appear twice: once in the AP export and again as bill lines in the accounting system. Adding the two counts those bills twice.
 
 ## How it works
 
